@@ -8,7 +8,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 Route::post('/login', App\Http\Controllers\API\Auth\Login::class)->name('auth.login');
 Route::post('/register', App\Http\Controllers\API\Auth\Register::class)->name('auth.register');
-Route::post('/logout', App\Http\Controllers\API\Auth\Logout::class)->name('auth.logout');
+Route::post('/logout', App\Http\Controllers\API\Auth\Logout::class)->middleware('auth:sanctum')->name('auth.logout');
 Route::post('/request-password-reset', App\Http\Controllers\API\Auth\RequestPasswordReset::class)->middleware(['throttle:api/request-password-reset'])->name('auth.request-password-reset');
 Route::post('/confirm-password-reset-request/{token?}', App\Http\Controllers\API\Auth\ConfirmPasswordResetRequest::class)->name('auth.confirm-password-reset-request');
 Route::post('/request-email-verification', App\Http\Controllers\API\Auth\RequestEmailVerification::class)->middleware(['throttle:api/request-email-verification'])->name('auth.request-email-verification');
