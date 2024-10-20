@@ -21,6 +21,7 @@ class Register extends Controller
         $user = DB::transaction(function () use (&$result, $validated) {
             $user = User::create([
                 'name' => $validated['name'],
+                'slug' => User::generateSlug(),
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
             ]);

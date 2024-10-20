@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Thought;
+use App\Policies\ThoughtPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -36,5 +39,7 @@ class AppServiceProvider extends ServiceProvider
                 ], 429);
             });
         });
+
+        Gate::policy(Thought::class, ThoughtPolicy::class);
     }
 }
