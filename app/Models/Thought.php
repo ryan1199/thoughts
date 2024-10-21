@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -15,7 +16,7 @@ class Thought extends Model
     use HasFactory;
     
     protected $fillable = [
-        'slug', 'topic', 'content', 'tags', 'open', 'user_id',
+        'slug', 'topic', 'content', 'edited_contents', 'tags', 'open', 'user_id',
     ];
 
     protected function topic(): Attribute
@@ -53,6 +54,12 @@ class Thought extends Model
             }
         );
     }
+    protected function casts(): array
+    {
+        return [
+            'edited_contents' => 'array',
+        ];
+    }
     public function scopeTopic($query, $topic)
     {
         return $query->where('topic', 'LIKE', '%' . $topic . '%');
@@ -89,5 +96,9 @@ class Thought extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    public function replies(): HasMany
+    {
+        return $this->hasMany(Reply::class);
     }
 }

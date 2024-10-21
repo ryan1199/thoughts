@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ThoughtResource extends JsonResource
+class ReplyResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,12 +18,14 @@ class ThoughtResource extends JsonResource
         return [
             'id' => $this->id,
             'slug' => $this->slug,
-            'topic' => $this->topic,
             'content' => $this->content,
             'edited_contents' => $this->edited_contents,
-            'tags' => $this->tags,
-            'open' => $this->open,
+            'pinned' => $this->pinned,
             'user' => new UserResource($this->whenLoaded('user')),
+            'thought' => new ThoughtResource($this->whenLoaded('thought')),
+            'reply' => new ReplyResource($this->whenLoaded('reply')),
+            'replied' => $this->replied,
+            'replies' => new ReplyCollection($this->whenLoaded('replies')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

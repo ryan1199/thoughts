@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\API\Reply\PinnedReplyController;
+use App\Http\Controllers\API\Reply\UnpinnedReplyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +15,17 @@ Route::post('/request-password-reset', App\Http\Controllers\API\Auth\RequestPass
 Route::post('/confirm-password-reset-request/{token?}', App\Http\Controllers\API\Auth\ConfirmPasswordResetRequest::class)->name('auth.confirm-password-reset-request');
 Route::post('/request-email-verification', App\Http\Controllers\API\Auth\RequestEmailVerification::class)->middleware(['throttle:api/request-email-verification'])->name('auth.request-email-verification');
 Route::post('/confirm-email-verification-request/{token?}', App\Http\Controllers\API\Auth\ConfirmEmailVerificationRequest::class)->name('auth.confirm-email-verification-request');
-Route::apiResource('/thoughts', App\Http\Controllers\API\Thought\ThoughtController::class);
+Route::apiResource('thoughts', App\Http\Controllers\API\Thought\ThoughtController::class);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::scopeBindings()->group(function () {
+        Route::patch('/thoughts/{thought}/replies/{reply}/pinned', PinnedReplyController::class);
+        Route::patch('/thoughts/{thought}/replies/{reply}/unpinned', UnpinnedReplyController::class);
+    });
+});
+Route::apiResource('thoughts.replies', App\Http\Controllers\API\Reply\ReplyController::class)->scoped([
+    'thought' => 'id',
+    'reply' => 'id',
+]);
 Route::fallback(function () {
     return response()->json([
         'message' => 'Resource not found.',

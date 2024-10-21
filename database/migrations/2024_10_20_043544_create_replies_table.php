@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Reply;
+use App\Models\Thought;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -12,15 +14,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('thoughts', function (Blueprint $table) {
+        Schema::create('replies', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique();
-            $table->string('topic');
             $table->longText('content');
             $table->json('edited_contents')->nullable();
-            $table->longText('tags');
-            $table->boolean('open')->default(true);
+            $table->boolean('pinned')->default(false);
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(Thought::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->boolean('replied')->default(false);
+            $table->foreignIdFor(Reply::class, 'replied_id')->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -30,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('thoughts');
+        Schema::dropIfExists('replies');
     }
 };

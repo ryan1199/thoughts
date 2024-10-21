@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Reply;
 use App\Models\Thought;
+use App\Policies\ReplyPolicy;
 use App\Policies\ThoughtPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -41,5 +43,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::policy(Thought::class, ThoughtPolicy::class);
+        Gate::policy(Reply::class, ReplyPolicy::class);
     }
 }

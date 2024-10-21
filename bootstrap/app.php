@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            if ($request->is('api/thoughts/*/replies/*')) {
+                return response()->json([
+                    'message' => 'Replies record not found.'
+                ], 404);
+            }
             if ($request->is('api/thoughts/*')) {
                 return response()->json([
                     'message' => 'Thought record not found.'

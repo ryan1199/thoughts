@@ -17,7 +17,7 @@ class ThoughtController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('auth:sanctum', only: ['store', 'update', 'delete']),
+            new Middleware('auth:sanctum', only: ['store', 'update', 'destroy']),
         ];
     }
     /**
@@ -38,11 +38,28 @@ class ThoughtController extends Controller implements HasMiddleware
         if ($request->has('open')) {
             $thoughts = $thoughts->open($request->open);
         }
-        if ($request->has(['order', 'direction'])) {
+        if ($request->has('order')) {
             $columns = ['topic', 'content', 'tags', 'open', 'created'];
-            $directions = ['asc', 'desc'];
             $column = in_array($request->get('order'), $columns) ? $request->get('order') : 'created';
+            $column = $column == 'created' ? 'created_at' : $column;
+            if ($request->has('direction')) {
+                $directions = ['asc', 'desc'];
+                $direction = in_array($request->get('direction'), $directions) ? $request->get('direction') : 'desc';
+            } else {
+                $direction = 'desc';
+            }
+            $thoughts = $thoughts->orderBy($column, $direction);
+        }
+        if ($request->has('direction')) {
+            $directions = ['asc', 'desc'];
             $direction = in_array($request->get('direction'), $directions) ? $request->get('direction') : 'desc';
+            if ($request->has('order')) {
+                $columns = ['topic', 'content', 'tags', 'open', 'created'];
+                $column = in_array($request->get('order'), $columns) ? $request->get('order') : 'created';
+                $column = $column == 'created' ? 'created_at' : $column;
+            } else {
+                $column = 'created_at';
+            }
             $thoughts = $thoughts->orderBy($column, $direction);
         }
         if ($request->has('page')) {

@@ -12,7 +12,7 @@ class UpdateThoughtRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('update', [Thought::class, $this->thought]);
+        return auth('sanctum')->user()->can('update', [Thought::class, $this->thought]);
     }
 
     /**

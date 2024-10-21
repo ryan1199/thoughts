@@ -27,6 +27,7 @@ class Login extends Controller
                 ], 403);
             } else {
                 if (Auth::attempt($validated)) {
+                    $request->user()->tokens()->delete();
                     return response()->json([
                         'message' => 'Login successfully.',
                         'access_token' => $request->user()->createToken('authToken')->plainTextToken,

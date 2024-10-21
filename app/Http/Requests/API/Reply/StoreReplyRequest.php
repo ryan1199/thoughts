@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Requests\API\Thought;
+namespace App\Http\Requests\API\Reply;
 
-use App\Models\Thought;
+use App\Models\Reply;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreThoughtRequest extends FormRequest
+class StoreReplyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return auth('sanctum')->user()->can('create', [Thought::class]);
+        return auth('sanctum')->user()->can('create', [Reply::class]);
     }
 
     /**
@@ -23,10 +23,8 @@ class StoreThoughtRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'topic' => ['required', 'string', 'max:100'],
             'content' => ['required', 'string', 'max:1000'],
-            'tags' => ['required', 'string', 'max:100'],
-            'open' => ['required', 'boolean']
+            'replied_id' => ['sometimes', 'required', 'numeric', 'exists:replies,id'],
         ];
     }
 }
