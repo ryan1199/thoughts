@@ -10,17 +10,10 @@ use App\Http\Resources\ReplyResource;
 use App\Models\Reply;
 use App\Models\Thought;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Arr;
 
 class ReplyController extends Controller
 {
-    public static function middleware(): array
-    {
-        return [
-            new Middleware('auth:sanctum', only: ['store', 'update', 'destroy']),
-        ];
-    }
     /**
      * Display a listing of the resource.
      */

@@ -9,17 +9,9 @@ use App\Http\Resources\ThoughtCollection;
 use App\Http\Resources\ThoughtResource;
 use App\Models\Thought;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class ThoughtController extends Controller implements HasMiddleware
+class ThoughtController extends Controller
 {
-    public static function middleware(): array
-    {
-        return [
-            new Middleware('auth:sanctum', only: ['store', 'update', 'destroy']),
-        ];
-    }
     /**
      * Display a listing of the resource.
      */
