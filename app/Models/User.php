@@ -48,6 +48,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function scopeName($query, $name)
+    {
+        return $query->where('name', 'LIKE', '%' . $name . '%');
+    }
+    public function scopeEmail($query, $email)
+    {
+        return $query->where('email', 'LIKE', '%' . $email . '%');
+    }
     public static function generateSlug()
     {
         $slug = 'U' . now()->year . now()->month . now()->day;

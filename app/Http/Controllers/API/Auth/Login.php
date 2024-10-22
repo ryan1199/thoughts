@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Http\Requests\API\Auth\LoginRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 
 class Login extends Controller
@@ -30,6 +31,7 @@ class Login extends Controller
                     $request->user()->tokens()->delete();
                     return response()->json([
                         'message' => 'Login successfully.',
+                        'user' => new UserResource($request->user()),
                         'access_token' => $request->user()->createToken('authToken')->plainTextToken,
                         'token_type' => 'Bearer'
                     ], 200);

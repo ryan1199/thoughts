@@ -5,9 +5,6 @@ use App\Http\Controllers\API\Reply\UnpinnedReplyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 Route::post('/login', App\Http\Controllers\API\Auth\Login::class)->name('auth.login');
 Route::post('/register', App\Http\Controllers\API\Auth\Register::class)->name('auth.register');
 Route::post('/logout', App\Http\Controllers\API\Auth\Logout::class)->middleware('auth:sanctum')->name('auth.logout');
@@ -30,6 +27,9 @@ Route::middleware(['auth:sanctum', 'thought.is_open'])->group(function () {
         'thought' => 'id',
         'reply' => 'id',
     ])->except(['store', 'update', 'destroy'])->withoutMiddleware(['auth:sanctum', 'thought.is_open']);
+});
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResource('users', App\Http\Controllers\API\User\UserContoller::class)->only(['index', 'show', 'update', 'destroy']);
 });
 Route::fallback(function () {
     return response()->json([

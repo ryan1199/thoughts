@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Requests\API\Auth;
+namespace App\Http\Requests\API\User;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
-class RegisterRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -23,9 +22,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email:rfc,dns,spoof', 'max:255', 'unique:users,email'],
-            'password' => ['required', Password::min(8), 'max:128', 'confirmed'],
+            //
         ];
     }
 }

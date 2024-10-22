@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'slug' => $this->slug,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
+            'thoughts' => new ThoughtCollection($this->whenLoaded('thoughts')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
