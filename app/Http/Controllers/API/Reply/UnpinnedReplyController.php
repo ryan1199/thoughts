@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Reply;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ReplyResource;
+use App\Models\Notification;
 use App\Models\Reply;
 use App\Models\Thought;
 use Illuminate\Http\Request;
@@ -20,6 +21,21 @@ class UnpinnedReplyController extends Controller
         $reply->pinned = false;
         $reply->save();
         $reply->load(['user', 'thought', 'replies', 'reply']);
+        if (auth('sanctum')->user()->id != $reply->user_id) {
+            $links = [];
+            $links['user'] = auth('sanctum')->user()->slug;
+            $links['thought'] = $thought->slug;
+            $links['reply'] = $reply->slug;
+            $content = 'unpinned your reply';
+            $user_id = $reply->user_id;
+            $notification = new Notification;
+            $notification->slug = Notification::generateSlug();
+            $notification->content = $content;
+            $notification->read = false;
+            $notification->links = $links;
+            $notification->user_id = $user_id;
+            $notification->save();
+        }
         return new ReplyResource($reply);
     }
 }

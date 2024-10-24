@@ -7,6 +7,7 @@ use App\Http\Requests\API\Reply\StoreReplyRequest;
 use App\Http\Requests\API\Reply\UpdateReplyRequest;
 use App\Http\Resources\ReplyCollection;
 use App\Http\Resources\ReplyResource;
+use App\Models\Notification;
 use App\Models\Reply;
 use App\Models\Thought;
 use Illuminate\Http\Request;
@@ -97,6 +98,25 @@ class ReplyController extends Controller
         }
         $reply->save();
         $reply->load(['user', 'thought', 'replies', 'reply']);
+        if ($replied_id && auth('sanctum')->user()->id != $replied_reply->user_id || auth('sanctum')->user()->id != $thought->user_id) {
+            $links = [];
+            $links['user'] = auth('sanctum')->user()->slug;
+            $links['thought'] = $thought->slug;
+            $content = 'replied to your thought';
+            $user_id = $thought->user_id;
+            if ($replied_id) {
+                $links['reply'] = $replied_reply->slug;
+                $content = 'replied to your reply';
+                $user_id = $replied_reply->user_id;
+            }
+            $notification = new Notification;
+            $notification->slug = Notification::generateSlug();
+            $notification->content = $content;
+            $notification->read = false;
+            $notification->links = $links;
+            $notification->user_id = $user_id;
+            $notification->save();
+        }
         return new ReplyResource($reply);
     }
 

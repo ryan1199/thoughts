@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\Reply\PinnedReplyController;
 use App\Http\Controllers\API\Reply\UnpinnedReplyController;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,8 @@ Route::middleware(['auth:sanctum', 'thought.is_open'])->group(function () {
 });
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('users', App\Http\Controllers\API\User\UserContoller::class)->only(['index', 'show', 'update', 'destroy']);
+    Route::get('/users/{user}/notifications', App\Http\Controllers\API\User\NotificationListController::class)->can('viewAny', [Notification::class, 'user']);
+    Route::patch('/users/{user}/notifications/{notification}/mark-as-read', App\Http\Controllers\API\User\MarkAsReadNotificationController::class)->scopeBindings()->can('markAsRead', [Notification::class, 'notification']);
 });
 Route::fallback(function () {
     return response()->json([

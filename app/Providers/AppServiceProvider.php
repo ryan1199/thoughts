@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Notification;
 use App\Models\Reply;
 use App\Models\Thought;
 use App\Models\User;
+use App\Policies\NotificationPolicy;
 use App\Policies\ReplyPolicy;
 use App\Policies\ThoughtPolicy;
 use App\Policies\UserPolicy;
@@ -47,5 +49,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Thought::class, ThoughtPolicy::class);
         Gate::policy(Reply::class, ReplyPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policies(Notification::class, NotificationPolicy::class);
     }
 }

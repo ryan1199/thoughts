@@ -74,7 +74,7 @@ class UserContoller extends Controller
      */
     public function show(User $user)
     {
-        $user->load('thoughts');
+        $user->load(['thoughts']);
         return new UserResource($user);
     }
 

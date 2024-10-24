@@ -31,6 +31,11 @@ return Application::configure(basePath: dirname(__DIR__))
                     'message' => 'Thought record not found.'
                 ], 404);
             }
+            if ($request->is('api/users/*/notifications/*')) {
+                return response()->json([
+                    'message' => 'Notification record not found.'
+                ], 404);
+            }
             if ($request->is('api/users/*')) {
                 return response()->json([
                     'message' => 'User record not found.'
