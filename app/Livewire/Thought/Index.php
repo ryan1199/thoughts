@@ -3,59 +3,84 @@
 namespace App\Livewire\Thought;
 
 use App\Models\Thought;
+use Illuminate\Support\Arr;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Mary\Traits\Toast;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, Toast;
 
     #[Url(history: true)]
-    public ?string $topic;
+    public string $topic = '';
     #[Url(history: true)]
-    public ?string $content;
+    public string $content = '';
     #[Url(history: true)]
-    public ?string $tags;
+    public string $tags = '';
     #[Url(history: true)]
-    public ?bool $open;
+    public string $open = 'both';
     #[Url(history: true)]
-    public ?string $order;
+    public string $order = 'created';
     #[Url(history: true)]
-    public ?string $direction;
+    public string $direction = 'desc';
     #[Url(history: true)]
-    public ?int $itemsInPage;
+    public int $items_in_page = 10;
     #[Locked]
-    public $available_columns = ['topic', 'content', 'tags', 'open', 'created'];
+    public $available_columns = [
+        [
+            'name' => 'Topic',
+            'value' => 'topic'
+        ],
+        [
+            'name' => 'Content',
+            'value' => 'content'
+        ],
+        [
+            'name' => 'Tags',
+            'value' => 'tags'
+        ],
+        [
+            'name' => 'Open',
+            'value' => 'open'
+        ],
+        [
+            'name' => 'Created At',
+            'value' => 'created'
+        ],
+    ];
     #[Locked]
-    public $available_direction = ['asc', 'desc'];
+    public $available_direction = [
+        [
+            'name' => 'Ascending',
+            'value' => 'asc'
+        ],
+        [
+            'name' => 'Descending',
+            'value' => 'desc'
+        ],
+    ];
     #[Locked]
     public $available_open_options = [
         [
-            'name' => 'Only opened thought',
-            'value' => true
+            'name' => 'Opened thought',
+            'value' => 'open'
         ],
         [
             'name' => 'All thoughts',
-            'value' => null
+            'value' => 'both'
         ],
         [
-            'name' => 'Only closed thought',
-            'value' => false
+            'name' => 'Closed thought',
+            'value' => 'close'
         ],
     ];
     
     public function mount()
     {
-        $this->topic = null;
-        $this->content = null;
-        $this->tags = null;
-        $this->open = null;
-        $this->order = 'created';
-        $this->direction = 'desc';
-        $this->itemsInPage = 10;
         
     }
     public function render()
@@ -78,34 +103,42 @@ class Index extends Component
             $thoughts = $thoughts->tags($this->tags);
         }
         if ($this->open !== null) {
-            $thoughts = $thoughts->open($this->open);
+            switch ($this->open) {
+                case 'open':
+                    $thoughts = $thoughts->open(true);
+                    break;
+                case 'close':
+                    $thoughts = $thoughts->open(false);
+                    break;
+                default:
+                    $thoughts = $thoughts;
+                    break;
+            }
         }
         if ($this->order !== null) {
-            $column = in_array($this->order, $this->available_columns) ? $this->order : 'created';
+            $column = in_array($this->order, Arr::pluck($this->available_columns, 'value')) ? $this->order : 'created';
             $column = $column == 'created' ? 'created_at' : $column;
             if ($this->direction !== null) {
-                $directions = ['asc', 'desc'];
-                $direction = in_array($this->direction, $directions) ? $this->direction : 'desc';
+                $direction = in_array($this->direction, Arr::pluck($this->available_direction, 'value')) ? $this->direction : 'desc';
             } else {
                 $direction = 'desc';
             }
             $thoughts = $thoughts->orderBy($column, $direction);
         }
         if ($this->direction !== null) {
-            $directions = ['asc', 'desc'];
-            $direction = in_array($this->direction, $directions) ? $this->direction : 'desc';
+            $direction = in_array($this->direction, Arr::pluck($this->available_direction, 'value')) ? $this->direction : 'desc';
             if ($this->order !== null) {
-                $column = in_array($this->order, $this->available_columns) ? $this->order : 'created';
+                $column = in_array($this->order, Arr::pluck($this->available_columns, 'value')) ? $this->order : 'created';
                 $column = $column == 'created' ? 'created_at' : $column;
             } else {
                 $column = 'created_at';
             }
             $thoughts = $thoughts->orderBy($column, $direction);
         }
-        if ($this->itemsInPage !== null) {
-            $thoughts = $this->itemsInPage > 0 && $this->itemsInPage <= 100 ? $thoughts->paginate($this->itemsInPage)->withQueryString() : $thoughts->paginate(50)->withQueryString();
+        if ($this->items_in_page !== null) {
+            $thoughts = $this->items_in_page > 0 && $this->items_in_page <= 100 ? $thoughts->paginate($this->items_in_page)->withQueryString() : $thoughts->paginate(50)->withQueryString();
         }
-        if ($this->itemsInPage === null) {
+        if ($this->items_in_page === null) {
             $thoughts = $thoughts->paginate(50)->withQueryString();
         }
         return $thoughts;
@@ -114,5 +147,6 @@ class Index extends Component
     {
         unset($this->thoughts);
         $this->resetPage();
+        $this->success('Found '.$this->thoughts->total(), position: 'toast-bottom');
     }
 }
