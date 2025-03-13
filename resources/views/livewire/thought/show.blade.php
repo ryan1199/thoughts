@@ -1,5 +1,5 @@
 <div class="relative flex flex-row">
-    <x-card class="w-1/3 h-fit mr-2 sticky top-0" shadow>
+    <x-card class="w-2/6 h-fit mr-2 sticky top-0" shadow>
         <x-avatar image="https://picsum.photos/200/200" class="!w-24">
             <x-slot:title class="text-3xl pl-2">
                 {{ $user->name }}
@@ -11,13 +11,13 @@
             </x-slot:subtitle>
         </x-avatar>
         <div class="mt-4">
-            <x-button label="Visit profile" link="{{ route('thoughts.show', $thought->slug) }}" class="w-full btn-outline" />
+            <x-button label="Visit profile" link="{{ route('users.show', $user->slug) }}" class="w-full btn-outline" />
         </div>
         <div class="mt-4 flex flex-col space-y-4">
             @foreach ($user->thoughts as $user_thought)
                 <x-card title="{{ $user_thought->topic }}" subtitle="{{ $user_thought->slug }}" class="bg-base-200" shadow separator wire:key="{{ rand() }}">
                     <div class="flex flex-col space-y-2">
-                        <div class="line-clamp-3 overflow-x-scroll">
+                        <div class="line-clamp-3 overflow-x-auto">
                             {{ $user_thought->content }}
                         </div>
                         <div class="overflow-x-auto">
@@ -47,42 +47,49 @@
             @endforeach
         </div>
     </x-card>
-    <x-card title="{{ $thought->topic }}" subtitle="{{ $thought->slug }}" class="w-full" shadow separator wire:key="{{ rand() }}">
-        <div class="flex flex-col space-y-2">
-            <div>
-                {{ $thought->created_at->longRelativeDiffForHumans() }}
-            </div>
-            <div class="overflow-x-auto">
-                <span>Tags:</span>
-                @forelse ($thought->tags as $tag)
-                    <span wire:key="{{ rand() }}">
-                        @if ($loop->last)
-                            <x-badge value="{{ $tag }}" class="badge-primary" />
-                        @else
-                            <x-badge value="{{ $tag }}" class="badge-primary" />,
-                        @endif
+    <div class="w-3/6 flex flex-col space-y-2 overflow-x-clip">
+        <x-card title="{{ $thought->topic }}" subtitle="{{ $thought->slug }}" shadow separator wire:key="{{ rand() }}">
+            <div class="flex flex-col space-y-2">
+                <div>
+                    {{ $thought->created_at->longRelativeDiffForHumans() }}
+                </div>
+                <div class="overflow-x-auto">
+                    <span>Tags:</span>
+                    {{-- botton for tag's search --}}
+                    @forelse ($thought->tags as $tag)
+                        <span wire:key="{{ rand() }}">
+                            @if ($loop->last)
+                                <x-badge value="{{ $tag }}" class="badge-primary" />
+                            @else
+                                <x-badge value="{{ $tag }}" class="badge-primary" />,
+                            @endif
+                        </span>
+                    @empty
+                        <span>There are no tags</span>
+                    @endforelse
+                </div>
+                @if ($thought->open === 'Open')
+                    <span><x-badge value="{{ $thought->open }}" class="badge-success text-neutral-content" /></span>
+                @else
+                    <span><x-badge value="{{ $thought->open }}" class="badge-error text-neutral" /></span>
+                @endif
+                <div class="">
+                    {{ $thought->content }}
+                </div>
+                <div>
+                    <span>Replies:</span>
+                    <span>
+                        {{ $thought->replies_count }}
                     </span>
-                @empty
-                    <span>There are no tags</span>
-                @endforelse
+                </div>
             </div>
-            @if ($thought->open === 'Open')
-                <span><x-badge value="{{ $thought->open }}" class="badge-success text-neutral-content" /></span>
-            @else
-                <span><x-badge value="{{ $thought->open }}" class="badge-error text-neutral" /></span>
-            @endif
-            <div class="">
-                {{ $thought->content }}
-            </div>
-            <div>
-                <span>Replies:</span>
-                <span>
-                    {{ $thought->replies_count }}
-                </span>
-            </div>
-            <div>
-                <x-button label="Read more" link="{{ route('thoughts.show', $thought->slug) }}" class="w-full btn-outline" />
-            </div>
-        </div>
-    </x-card>
+        </x-card>
+        {{-- comment form --}}
+        {{-- sort --}}
+        @if ($thought->replies_count > 0)
+            @livewire('reply.index', ['thought' => $thought->id, 'replied_reply' => null], key(rand()))
+        @else
+            <x-card title="There are no replies." subtitle="Sorry we can't find any replies for this thought." class="w-full h-fit" shadow></x-card>
+        @endif
+    </div>
 </div>

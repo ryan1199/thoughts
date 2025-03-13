@@ -2,6 +2,7 @@
 
 use App\Livewire\Thought\Index;
 use App\Livewire\Thought\Show;
+use App\Livewire\User\Show as UserShow;
 use App\Livewire\Welcome;
 use Illuminate\Support\Facades\Route;
 
@@ -18,3 +19,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', Index::class);
 Route::get('/{thought:slug}', Show::class)->name('thoughts.show');
+Route::get('/users/{user:slug}', UserShow::class)->name('users.show');

@@ -33,17 +33,17 @@
         </div>
     </div>
     <x-range
-    wire:model.live.debounce="items_in_page"
-    min="1"
-    max="100"
-    step="1"
-    label="Items per page: {{ $items_in_page }}"
-    class="range-primary" />
+        wire:model.live.debounce="items_in_page"
+        min="1"
+        max="100"
+        step="1"
+        label="Items per page: {{ $items_in_page }}"
+        class="range-primary" />
     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         @forelse ($thoughts as $thought)
             <x-card title="{{ $thought->topic }}" subtitle="{{ $thought->slug }}" shadow separator wire:key="{{ rand() }}">
                 <div class="flex flex-col space-y-2">
-                    <div class="line-clamp-3 overflow-x-scroll">
+                    <div class="line-clamp-3 overflow-x-auto">
                         {{ $thought->content }}
                     </div>
                     <div class="overflow-x-auto">
