@@ -15,6 +15,7 @@ class Index extends Component
 {
     use WithPagination, Toast;
 
+    public int $user_id = 0;
     #[Url(history: true)]
     public string $topic = '';
     #[Url(history: true)]
@@ -79,9 +80,9 @@ class Index extends Component
         ],
     ];
     
-    public function mount()
+    public function mount($user_id = null)
     {
-        
+        $this->user_id = (int) $user_id;
     }
     public function render()
     {
@@ -92,7 +93,13 @@ class Index extends Component
     #[Computed()]
     public function thoughts()
     {
-        $thoughts = Thought::query()->with('user');
+        $thoughts = Thought::query()->withCount('replies');
+        if ($this->user_id != 0) {
+            $thoughts = $thoughts->where('user_id', $this->user_id);
+        }
+        if ($this->user_id == 0) {
+            $thoughts = $thoughts->with('user');
+        }
         if ($this->topic !== null) {
             $thoughts = $thoughts->topic($this->topic);
         }

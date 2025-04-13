@@ -12,7 +12,7 @@
                 :options="$available_open_options"
                 option-value="value"
                 wire:model.live="open"
-                class="" />
+                class="whitespace-nowrap" />
             </div>
             <div class="overflow-x-auto">
                 <x-radio
@@ -20,7 +20,7 @@
                 :options="$available_columns"
                 option-value="value"
                 wire:model.live="order"
-                class="" />
+                class="whitespace-nowrap" />
             </div>
             <div class="overflow-x-auto">
                 <x-radio
@@ -28,7 +28,7 @@
                 :options="$available_direction"
                 option-value="value"
                 wire:model.live="direction"
-                class="" />
+                class="whitespace-nowrap" />
             </div>
         </div>
     </div>
@@ -41,7 +41,7 @@
         class="range-primary" />
     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         @forelse ($thoughts as $thought)
-            <x-card title="{{ $thought->topic }}" subtitle="{{ $thought->slug }}" shadow separator wire:key="{{ rand() }}">
+            <x-card title="{{ $thought->topic }}" subtitle="{{ $thought->slug }}" class="md:h-fit" shadow separator wire:key="{{ rand() }}">
                 <div class="flex flex-col space-y-2">
                     <div class="line-clamp-3 overflow-x-auto">
                         {{ $thought->content }}
@@ -60,15 +60,23 @@
                             <span>There are no tags</span>
                         @endforelse
                     </div>
-                    <div>
-                        <span>By</span>
-                        <span> {{ $thought->user->name }}</span>
-                    </div>
+                    @if ($user_id == 0)
+                        <div>
+                            <span>By</span>
+                            <span> {{ $thought->user->name }}</span>
+                        </div>
+                    @endif
                     @if ($thought->open === 'Open')
                         <span><x-badge value="{{ $thought->open }}" class="badge-success text-neutral-content" /></span>
                     @else
                         <span><x-badge value="{{ $thought->open }}" class="badge-error text-neutral" /></span>
                     @endif
+                    <div>
+                        <span>Replies:</span>
+                        <span>
+                            {{ $thought->replies_count }}
+                        </span>
+                    </div>
                     <div>
                         <x-button label="Read more" link="{{ route('thoughts.show', $thought->slug) }}" class="w-full btn-outline" />
                     </div>
