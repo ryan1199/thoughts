@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Notification extends Model
@@ -72,5 +73,24 @@ class Notification extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    public static function store(User $recipient, $links, $content)
+    {
+        $success = false;
+        $notification = new Notification;
+        $success = DB::transaction(function () use ($recipient, $links, $content, &$notification) {
+            $notification->slug = $notification->generateSlug();
+            $notification->content = $content;
+            $notification->read = false;
+            $notification->links = $links;
+            $notification->user_id = $recipient->id;
+            $notification->save();
+            return $notification;
+        }, 10);
+        if ($success) {
+            return $success;
+        } else {
+            return false;
+        }
     }
 }
