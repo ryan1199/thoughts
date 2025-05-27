@@ -50,10 +50,9 @@
                         <span>Tags:</span>
                         @forelse ($thought->tags as $tag)
                             <span wire:key="{{ rand() }}">
-                                @if ($loop->last)
-                                    <x-badge value="{{ $tag }}" class="badge-primary" />
-                                @else
-                                    <x-badge value="{{ $tag }}" class="badge-primary" />,
+                                <x-button label="{{ $tag }}" link="{{ route('thoughts.index','tags='.$tag) }}" class="btn-primary btn-xs" />
+                                @if (!$loop->last)
+                                    ,
                                 @endif
                             </span>
                         @empty
@@ -66,11 +65,13 @@
                             <span> {{ $thought->user->name }}</span>
                         </div>
                     @endif
-                    @if ($thought->open === 'Open')
-                        <span><x-badge value="{{ $thought->open }}" class="badge-success text-neutral-content" /></span>
-                    @else
-                        <span><x-badge value="{{ $thought->open }}" class="badge-error text-neutral" /></span>
-                    @endif
+                    <span class="text-xs text-neutral-content">
+                        @if ($thought->open === 'Open')
+                            <x-button label="{{ $thought->open }}" link="{{ route('thoughts.index','open='.strtolower($thought->open)) }}" class="btn-success btn-xs" />
+                        @else
+                            <x-button label="{{ $thought->open }}" link="{{ route('thoughts.index','open='.strtolower($thought->open)) }}" class="btn-error btn-xs" />
+                        @endif
+                    </span>
                     <div>
                         <span>Replies:</span>
                         <span>

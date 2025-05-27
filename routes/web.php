@@ -17,6 +17,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', Index::class);
+Route::get('/', Index::class)->name('thoughts.index');
 Route::get('/{thought:slug}', Show::class)->name('thoughts.show');
 Route::get('/users/{user:slug}', UserShow::class)->name('users.show');
+
+// thought show done
+// thought index done
+// pinned/unpinned button in reply index not yet
+// reply sort done
+// reply reply for reply done
+// broadcast for changed reply's pinned status not yet
+// thought policy not yet
+// reply policy not yet
+// messages for user not yet

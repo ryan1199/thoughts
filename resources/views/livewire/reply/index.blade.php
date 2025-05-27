@@ -5,14 +5,9 @@
                 <div class="card-body">
                     <div class="w-full h-1 flex flex-row justify-between items-center">
                         <span class="font-normal text-sm">{{ $reply->slug }}</span>
-                        {{-- piined/unpinned button --}}
-                        {{-- new component --}}
+                        {{-- pinned/unpinned button --}}
                         <div class="w-full flex justify-end">
-                            @if ($reply->pinned == "Pinned")
-                                <x-button label="Pinned" icon="o-paper-clip" link="{{ route('users.show', $reply->user->slug) }}" class="w-fit h-fit px-4 btn-circle btn-outline" />
-                            @else
-                                <x-button label="Unpinned" icon="o-paper-clip" link="{{ route('users.show', $reply->user->slug) }}" class="w-fit h-fit px-4 btn-circle btn-outline" />
-                            @endif
+                            @livewire('reply.pin-button', ['thought' => $reply->thought_id, 'reply' => $reply->id], key(rand()))
                         </div>
                     </div>
                     <div class="divider"></div>

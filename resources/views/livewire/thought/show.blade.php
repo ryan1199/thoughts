@@ -24,21 +24,22 @@
                             <span>Tags:</span>
                             @forelse ($user_thought->tags as $tag)
                                 <span wire:key="{{ rand() }}">
-                                    @if ($loop->last)
-                                        <x-badge value="{{ $tag }}" class="badge-primary" />
-                                    @else
-                                        <x-badge value="{{ $tag }}" class="badge-primary" />,
+                                    <x-button label="{{ $tag }}" link="{{ route('thoughts.index','tags='.$tag) }}" class="btn-primary btn-xs" />
+                                    @if (!$loop->last)
+                                        ,
                                     @endif
                                 </span>
                             @empty
                                 <span>There are no tags</span>
                             @endforelse
                         </div>
-                        @if ($user_thought->open === 'Open')
-                            <span><x-badge value="{{ $user_thought->open }}" class="badge-success text-neutral-content" /></span>
-                        @else
-                            <span><x-badge value="{{ $user_thought->open }}" class="badge-error text-neutral" /></span>
-                        @endif
+                        <span class="text-neutral-content">
+                            @if ($user_thought->open === 'Open')
+                                <x-button label="{{ $user_thought->open }}" link="{{ route('thoughts.index','open='.strtolower($user_thought->open)) }}" class="btn-success btn-xs" />
+                            @else
+                                <x-button label="{{ $user_thought->open }}" link="{{ route('thoughts.index','open='.strtolower($user_thought->open)) }}" class="btn-error btn-xs" />
+                            @endif
+                        </span>
                         <div>
                             <x-button label="Read more" link="{{ route('thoughts.show', $user_thought->slug) }}" class="w-full btn-outline" />
                         </div>
@@ -55,24 +56,24 @@
                 </div>
                 <div class="overflow-x-auto">
                     <span>Tags:</span>
-                    {{-- botton for tag's search --}}
                     @forelse ($thought->tags as $tag)
                         <span wire:key="{{ rand() }}">
-                            @if ($loop->last)
-                                <x-badge value="{{ $tag }}" class="badge-primary" />
-                            @else
-                                <x-badge value="{{ $tag }}" class="badge-primary" />,
+                            <x-button label="{{ $tag }}" link="{{ route('thoughts.index','tags='.$tag) }}" class="btn-primary btn-xs" />
+                            @if (!$loop->last)
+                                ,
                             @endif
                         </span>
                     @empty
                         <span>There are no tags</span>
                     @endforelse
                 </div>
-                @if ($thought->open === 'Open')
-                    <span><x-badge value="{{ $thought->open }}" class="badge-success text-neutral-content" /></span>
-                @else
-                    <span><x-badge value="{{ $thought->open }}" class="badge-error text-neutral" /></span>
-                @endif
+                <span class="text-neutral-content">
+                    @if ($thought->open === 'Open')
+                        <x-button label="{{ $thought->open }}" link="{{ route('thoughts.index','open='.strtolower($thought->open)) }}" class="btn-success btn-xs" />
+                    @else
+                        <x-button label="{{ $thought->open }}" link="{{ route('thoughts.index','open='.strtolower($thought->open)) }}" class="btn-error btn-xs" />
+                    @endif
+                </span>
                 <div class="">
                     {{ $thought->content }}
                 </div>
@@ -98,7 +99,6 @@
         {{-- sort --}}
         @if ($thought->replies_count > 0)
             @livewire('reply.sort', ['thought' => $thought->id], key(rand()))
-            {{-- @livewire('reply.index', ['thought' => $thought->id, 'replied_reply' => null, 'position_of_color_for_border' => 0], key(rand())) --}}
         @else
             <x-card title="There are no replies." subtitle="Sorry we can't find any replies for this thought." class="w-full h-fit" shadow></x-card>
         @endif
